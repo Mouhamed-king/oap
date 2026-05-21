@@ -965,35 +965,52 @@ p {
 .solution-overlay {
   position: absolute;
   inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   z-index: 20;
-  background: rgba(13, 31, 60, 0.85);
-  backdrop-filter: blur(12px);
+  background: radial-gradient(circle at center, rgba(13, 31, 60, 0.55) 0%, rgba(13, 31, 60, 0.88) 100%);
 }
 
-.solution-box {
+.cinematic-eyebrow {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--sky);
+  text-transform: uppercase;
+  margin-bottom: 1.2rem;
+  background: rgba(91, 179, 240, 0.12);
+  padding: 6px 18px;
+  border-radius: 20px;
+  display: inline-block;
+  border: 1px solid rgba(91, 179, 240, 0.2);
+  text-shadow: 0 0 10px rgba(91, 179, 240, 0.3);
+}
+
+.cinematic-eyebrow.active {
+  color: #25D366;
+  background: rgba(37, 211, 102, 0.1);
+  border-color: rgba(37, 211, 102, 0.2);
+  text-shadow: 0 0 10px rgba(37, 211, 102, 0.3);
+}
+
+.cinematic-title {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1.15;
+  color: #ffffff;
+  margin-bottom: 1.5rem;
+  text-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  background: linear-gradient(to right, #ffffff 30%, rgba(200, 225, 248, 0.95) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.cinematic-desc {
+  font-size: clamp(1.05rem, 2.5vw, 1.35rem);
+  font-weight: 400;
+  color: rgba(200, 225, 248, 0.88);
+  line-height: 1.65;
   max-width: 720px;
-  text-align: center;
-  padding: 56px 48px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 24px;
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
-  width: 90%;
-}
-
-.solution-box h2 {
-  font-size: 2.6rem;
-  margin: 16px 0 24px;
-  line-height: 1.1;
-}
-
-.solution-box>p {
-  font-size: 1.2rem;
-  color: rgba(255, 255, 255, 0.85);
-  margin-bottom: 32px;
+  margin: 0 auto;
+  text-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
 }
 
 .claim-steps {
@@ -1328,20 +1345,20 @@ p {
 .orbital-stage {
   position: relative;
   width: 100%;
-  max-width: 500px;
+  max-width: 620px;
   aspect-ratio: 1;
   margin: 40px auto 80px;
   display: flex;
   align-items: center;
   justify-content: center;
-  --orbital-radius: 250px;
+  --orbital-radius: 290px;
 }
 
 .orbital-center {
   position: relative;
   z-index: 10;
-  width: 160px;
-  height: 160px;
+  width: 180px;
+  height: 180px;
   background: var(--paper);
   border: 2px solid var(--line);
   border-radius: 50%;
@@ -1356,7 +1373,7 @@ p {
 
 .orbital-center img {
   max-width: 100%;
-  max-height: 60px;
+  max-height: 72px;
   object-fit: contain;
   margin-bottom: 8px;
 }
@@ -1391,17 +1408,17 @@ p {
 
 .orbital-item-inner {
   position: absolute;
-  top: -45px;
-  left: -45px;
-  width: 90px;
-  height: 90px;
+  top: -55px;
+  left: -55px;
+  width: 110px;
+  height: 110px;
   background: var(--white);
   border: 1px solid var(--line);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 16px;
+  padding: 12px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
   animation: orbit-counter-rotate 40s linear infinite;
 }
@@ -2014,26 +2031,27 @@ p {
   }
 
   .orbital-stage {
-    --orbital-radius: 140px;
+    --orbital-radius: 165px;
     margin: 20px auto 40px;
+    max-width: 360px;
   }
 
   .orbital-center {
-    width: 120px;
-    height: 120px;
+    width: 140px;
+    height: 140px;
     padding: 16px;
   }
 
   .orbital-center img {
-    max-height: 40px;
+    max-height: 52px;
   }
 
   .orbital-item-inner {
-    width: 70px;
-    height: 70px;
-    top: -35px;
-    left: -35px;
-    padding: 12px;
+    width: 88px;
+    height: 88px;
+    top: -44px;
+    left: -44px;
+    padding: 10px;
   }
 
   .service-grid,
@@ -2191,4 +2209,31 @@ p {
   .next-services>div {
     flex-wrap: wrap;
   }
+}
+
+/* Team Contact Custom Component Styles */
+.team-contact-trigger {
+  --color-accent: var(--member-accent, var(--teal));
+  color: var(--color-accent) !important;
+  border: 1px solid color-mix(in srgb, var(--color-accent) 25%, transparent) !important;
+  background: color-mix(in srgb, var(--color-accent) 6%, transparent) !important;
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+}
+
+.team-contact-trigger:hover {
+  background: var(--color-accent) !important;
+  color: var(--white) !important;
+  border-color: var(--color-accent) !important;
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--color-accent) 25%, transparent) !important;
+}
+
+.team-card:hover .team-contact-trigger {
+  border-color: color-mix(in srgb, var(--color-accent) 45%, transparent) !important;
+  background: color-mix(in srgb, var(--color-accent) 12%, transparent) !important;
+}
+
+.team-card:hover .team-contact-trigger:hover {
+  background: var(--color-accent) !important;
+  color: var(--white) !important;
+  border-color: var(--color-accent) !important;
 }

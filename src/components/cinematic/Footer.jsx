@@ -13,7 +13,7 @@ const services = [
 ]
 
 const contacts = [
-  { icon: '📞', label: '+221 33 800 12 34', href: 'tel:+221338001234' },
+  { icon: '📞', label: '+221 77 862 86 48', href: 'tel:+221778628648' },
   { icon: '✉', label: 'contact@optimumassur.sn', href: 'mailto:contact@optimumassur.sn' },
   { icon: '📍', label: 'Dakar, Sénégal', href: '#' },
 ]
@@ -52,7 +52,7 @@ export default function Footer() {
             Prêt à être bien assuré ?
           </h2>
         </div>
-        <motion.a href="tel:+221338001234"
+        <motion.a href="tel:+221778628648"
           whileHover={{ scale: 1.04, boxShadow: '0 8px 40px rgba(91,179,240,0.4)' }}
           whileTap={{ scale: 0.97 }}
           style={{

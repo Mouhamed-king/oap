@@ -52,18 +52,14 @@ export default function PartnersSection() {
               background: 'radial-gradient(ellipse 80% 60% at 50% 50%, rgba(46,125,212,0.12) 0%, transparent 70%)',
               pointerEvents: 'none',
             }} />
-            <div style={{ fontSize: '0.6rem', letterSpacing: '0.2em', color: 'var(--sky)', marginBottom: '0.5rem' }}>
-              PARTENAIRE PRINCIPAL
-            </div>
+
             <motion.img
               src={main.image} alt={main.name}
               animate={{ filter: ['brightness(1)', 'brightness(1.1)', 'brightness(1)'] }}
               transition={{ duration: 4, repeat: Infinity }}
-              style={{ height: 80, maxWidth: 260, objectFit: 'contain', filter: 'brightness(1.05)' }}
+              style={{ height: 110, maxWidth: 300, objectFit: 'contain', filter: 'brightness(1.05)' }}
             />
-            <div style={{ fontSize: '0.78rem', color: 'rgba(168,216,248,0.65)', letterSpacing: '0.08em' }}>
-              {main.name}
-            </div>
+
           </div>
         </motion.div>
 
@@ -77,13 +73,13 @@ export default function PartnersSection() {
               style={{
                 background: 'rgba(255,255,255,0.04)',
                 border: '1px solid rgba(91,179,240,0.12)',
-                borderRadius: '16px', padding: '2rem 1.5rem',
+                borderRadius: '16px', padding: '2.5rem 2rem',
                 display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem',
                 cursor: 'default', transition: 'all 0.35s ease',
               }}
             >
               <img src={p.image} alt={p.name}
-                style={{ height: 60, maxWidth: 180, objectFit: 'contain', filter: 'brightness(0.9) grayscale(0.2)' }} />
+                style={{ height: 85, maxWidth: 220, objectFit: 'contain', filter: 'brightness(0.9) grayscale(0.2)' }} />
               <div style={{ fontSize: '0.72rem', color: 'rgba(168,216,248,0.5)', letterSpacing: '0.08em', textAlign: 'center' }}>
                 {p.name}
               </div>

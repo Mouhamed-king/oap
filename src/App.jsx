@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { motion, useScroll, useTransform, useAnimation, useInView } from 'framer-motion'
+import { motion, useScroll, useTransform, useAnimation, useInView, AnimatePresence } from 'framer-motion'
 import CampaignsCinematic from './components/CampaignsCinematic.jsx'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
@@ -54,10 +54,10 @@ const partners = [
 ]
 
 const team = [
-  { name: 'Direction générale', role: 'Vision, réseau compagnies et qualité du conseil', image: '/pdg.png' },
-  { name: 'Direction opérationnelle', role: 'Contrats, renouvellements et suivi administratif', image: '/dg.png' },
-  { name: 'Ressources humaines', role: 'Organisation interne et expérience client', image: '/drh.png' },
-  { name: 'Développement commercial', role: 'Conseil, fidélisation et accompagnement terrain', image: '/seo.png' },
+  { name: 'Directeur général', role: 'Vision, réseau compagnies et qualité du conseil', image: '/pdg.png', phone: '+221 77 429 75 54' },
+  { name: 'Directeur des opérations et du développement', role: 'Développement, accompagnement terrain et relations compagnies', image: '/dg.png', phone: '+221 77 862 86 48' },
+  { name: 'Assistant administratif', role: 'Contrats, renouvellements et suivi administratif', image: '/drh.png', phone: '+221 77 492 75 54' },
+  { name: 'Directrice adjointe', role: 'Organisation interne, pilotage et expérience client', image: '/seo.png', phone: '+221 77 709 84 68' },
 ]
 
 const process = [
@@ -311,10 +311,10 @@ function Navbar({ serviceMode = false }) {
       </nav>
 
       <div className="desktop-actions">
-        <a className="icon-link" href="tel:+221338001234" aria-label="Appeler Optimum Assur Pro">
+        <a className="icon-link" href="tel:+221778628648" aria-label="Appeler Optimum Assur Pro">
           <Phone size={18} />
         </a>
-        <a className="button button-primary" href="mailto:contact@optimumassur.sn?subject=Demande%20de%20devis">
+        <a className="button button-primary" href="mailto:oassurpro@gmail.com?subject=Demande%20de%20devis">
           <Mail size={18} />
           Devis
         </a>
@@ -331,7 +331,7 @@ function Navbar({ serviceMode = false }) {
               {link.label}
             </a>
           ))}
-          <a className="button button-primary" href="mailto:contact@optimumassur.sn?subject=Demande%20de%20devis">
+          <a className="button button-primary" href="mailto:oassurpro@gmail.com?subject=Demande%20de%20devis">
             <Mail size={18} />
             Demander un devis
           </a>
@@ -559,6 +559,123 @@ function BrokerageFlow() {
   )
 }
 
+const PANIC_EMOJIS = [
+  { char: '😰', angle: 15, dist: 190, scale: 1.2 },
+  { char: '😱', angle: 55, dist: 250, scale: 1.0 },
+  { char: '😵', angle: 95, dist: 170, scale: 1.3 },
+  { char: '🤯', angle: 140, dist: 270, scale: 1.15 },
+  { char: '💥', angle: 185, dist: 150, scale: 1.4 },
+  { char: '🚨', angle: 220, dist: 230, scale: 1.2 },
+  { char: '⚠️', angle: 265, dist: 180, scale: 1.0 },
+  { char: '🩹', angle: 310, dist: 260, scale: 1.1 },
+  { char: '📞', angle: 345, dist: 210, scale: 1.25 },
+  { char: '😱', angle: 120, dist: 220, scale: 1.05 },
+  { char: '🤯', angle: 200, dist: 280, scale: 1.35 },
+  { char: '🚨', angle: 290, dist: 260, scale: 1.1 },
+]
+
+function ClaimEmoji({ emoji, angle, dist, scale, scrollYProgress }) {
+  const rad = (angle * Math.PI) / 180
+  const targetX = Math.cos(rad) * dist
+  const targetY = Math.sin(rad) * dist * 0.65
+
+  const x = useTransform(scrollYProgress, [0.35, 0.58], [0, targetX])
+  const y = useTransform(scrollYProgress, [0.35, 0.58], [0, targetY])
+  const opacity = useTransform(scrollYProgress, [0.35, 0.40, 0.54, 0.58], [0, 1, 1, 0])
+  const emojiScale = useTransform(scrollYProgress, [0.35, 0.43, 0.58], [0, scale * 1.3, scale])
+  const rotate = useTransform(scrollYProgress, [0.35, 0.58], [0, angle % 2 === 0 ? 75 : -75])
+
+  return (
+    <motion.span
+      style={{
+        position: 'absolute',
+        left: '50%',
+        top: '65%',
+        x,
+        y,
+        opacity,
+        scale: emojiScale,
+        rotate,
+        marginLeft: '-25px',
+        marginTop: '-25px',
+        fontSize: 'clamp(2.5rem, 5vw, 4.2rem)',
+        filter: 'drop-shadow(0 12px 24px rgba(0,0,0,0.5))',
+        zIndex: 12,
+        pointerEvents: 'none',
+      }}
+    >
+      {emoji}
+    </motion.span>
+  )
+}
+
+function ScrollerDot({ idx, scrollYProgress }) {
+  const ranges = [
+    [0.55, 0.58, 0.63, 0.65],
+    [0.63, 0.66, 0.70, 0.72],
+    [0.72, 0.75, 0.79, 0.81],
+    [0.81, 0.84, 0.88, 0.90],
+    [0.90, 0.93, 0.96, 0.98],
+    [0.96, 0.98, 1.00, 1.00],
+  ]
+
+  const range = ranges[idx]
+  const scale = useTransform(scrollYProgress, range, [0.8, 1.4, 1.4, 0.8])
+  const opacity = useTransform(scrollYProgress, range, [0.35, 1, 1, 0.35])
+  const glow = useTransform(scrollYProgress, range, [
+    '0px 0px 0px rgba(91,179,240,0)',
+    '0px 0px 10px rgba(91,179,240,0.8)',
+    '0px 0px 10px rgba(91,179,240,0.8)',
+    '0px 0px 0px rgba(91,179,240,0)'
+  ])
+
+  return (
+    <motion.div
+      style={{
+        width: 10,
+        height: 10,
+        borderRadius: '50%',
+        background: idx === 5 ? 'linear-gradient(135deg, var(--teal), var(--sky))' : 'white',
+        scale,
+        opacity,
+        margin: '0 8px',
+        boxShadow: glow,
+      }}
+    />
+  )
+}
+
+function CinematicSlide({ scrollYProgress, range, children }) {
+  const opacity = useTransform(scrollYProgress, range, [0, 1, 1, 0])
+  const y = useTransform(scrollYProgress, range, [80, 0, 0, -80])
+  const blurValue = useTransform(scrollYProgress, range, ['blur(12px)', 'blur(0px)', 'blur(0px)', 'blur(12px)'])
+  const scale = useTransform(scrollYProgress, range, [0.9, 1, 1, 0.9])
+
+  return (
+    <motion.div
+      style={{
+        position: 'absolute',
+        inset: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        opacity,
+        y,
+        scale,
+        filter: blurValue,
+        pointerEvents: opacity === 0 ? 'none' : 'auto',
+        textAlign: 'center',
+        padding: '0 2rem',
+      }}
+    >
+      <div style={{ maxWidth: '850px', width: '100%' }}>
+        {children}
+      </div>
+    </motion.div>
+  )
+}
+
 function ClaimsCinematic() {
   const ref = useRef(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] })
@@ -576,17 +693,12 @@ function ClaimsCinematic() {
   const flashOpacity = useTransform(scrollYProgress, [0.34, 0.35, 0.4], [0, 0.9, 0])
   const impactScale = useTransform(scrollYProgress, [0.34, 0.35, 0.45], [1, 1.15, 1])
 
-  // Phase 3: Emojis burst delayed (0.39 to 0.55) -> don't burst immediately
-  const emojisOpacity = useTransform(scrollYProgress, [0.39, 0.43, 0.55, 0.6], [0, 1, 1, 0])
-  const emojisScale = useTransform(scrollYProgress, [0.39, 0.45], [0.2, 1])
+  // Phase 4: Stage blurs (0.55 to 0.70)
+  const stageBlur = useTransform(scrollYProgress, [0.55, 0.7], ['blur(0px)', 'blur(18px)'])
+  const stageOpacity = useTransform(scrollYProgress, [0.55, 0.7], [1, 0.3])
 
-  // Phase 4: Stage blurs (0.6 to 0.7)
-  const stageBlur = useTransform(scrollYProgress, [0.55, 0.7], ['blur(0px)', 'blur(16px)'])
-  const stageOpacity = useTransform(scrollYProgress, [0.55, 0.7], [1, 0.4])
-
-  // Phase 5: Solution text appears (0.7 to 0.8)
-  const solutionOpacity = useTransform(scrollYProgress, [0.65, 0.8], [0, 1])
-  const solutionY = useTransform(scrollYProgress, [0.65, 0.8], [60, 0])
+  // Phase 5: Solution overlay fades in (0.50 to 0.58)
+  const solutionOpacity = useTransform(scrollYProgress, [0.50, 0.58], [0, 1])
 
   return (
     <section className="claim-story" id="sinistres" ref={ref}>
@@ -605,52 +717,152 @@ function ClaimsCinematic() {
           <motion.div className="shock-ring shock-ring-one" style={{ opacity: shockOpacity, left: '50%', x: '-50%' }} />
           <motion.div className="shock-ring shock-ring-two" style={{ opacity: shockOpacity, left: '50%', x: '-50%' }} />
 
-          <motion.div className="panic-emojis full-width-emojis" style={{ opacity: emojisOpacity, scale: emojisScale }}>
-            {['😰', '😱', '😵', '🤯'].map((emoji, index) => {
-              const angle = (index / 8) * Math.PI * 2;
-              const distance = 150 + Math.random() * 150;
-              const x = Math.cos(angle) * distance;
-              const y = Math.sin(angle) * distance;
-
-              return (
-                <motion.span
-                  key={emoji + index}
-                  animate={{ rotate: [-10, 10, -10] }}
-                  transition={{ duration: 1.5 + Math.random(), repeat: Infinity, ease: 'easeInOut' }}
-                  style={{
-                    position: 'absolute',
-                    left: '50%',
-                    top: '60%',
-                    x: x,
-                    y: y,
-                    marginLeft: '-25px',
-                    marginTop: '-25px'
-                  }}
-                >
-                  {emoji}
-                </motion.span>
-              )
-            })}
-          </motion.div>
+          <div className="panic-emojis full-width-emojis">
+            {PANIC_EMOJIS.map((e, index) => (
+              <ClaimEmoji
+                key={index}
+                emoji={e.char}
+                angle={e.angle}
+                dist={e.dist}
+                scale={e.scale}
+                scrollYProgress={scrollYProgress}
+              />
+            ))}
+          </div>
         </motion.div>
 
-        <motion.div className="solution-overlay" style={{ opacity: solutionOpacity, y: solutionY }}>
-          <div className="solution-box">
-            <p className="eyebrow">Sinistre et assistance</p>
-            <h2>Après le choc, OAP reprend le fil: un seul dossier, un suivi humain.</h2>
-            <p>
-              Déclaration, pièces, relances, lecture des garanties et retour au client. Le courtier rend le processus moins opaque.
+        <motion.div className="solution-overlay" style={{ opacity: solutionOpacity }}>
+          {/* Slide 1: Intro */}
+          <CinematicSlide scrollYProgress={scrollYProgress} range={[0.55, 0.58, 0.63, 0.65]}>
+            <p className="cinematic-eyebrow">SINISTRES &amp; GESTION</p>
+            <h2 className="cinematic-title">Après le choc, OAP prend le relais.</h2>
+            <p className="cinematic-desc">
+              Un seul interlocuteur dédié, un suivi 100% humain et rigoureux pour défendre au mieux vos intérêts face aux compagnies d'assurance.
             </p>
-            <ol className="claim-steps">
-              <li>Déclarer et collecter les pièces utiles.</li>
-              <li>Ouvrir le dossier auprès de la compagnie.</li>
-              <li>Relancer, clarifier et suivre les délais.</li>
-              <li>Accompagner jusqu’à la clôture ou l’indemnisation.</li>
-            </ol>
-            <a className="button button-primary" href="tel:+221338001234">
-              <Phone size={18} />
-              Appeler OAP
-            </a>
+          </CinematicSlide>
+
+          {/* Slide 2: Etape 1 */}
+          <CinematicSlide scrollYProgress={scrollYProgress} range={[0.63, 0.66, 0.70, 0.72]}>
+            <p className="cinematic-eyebrow">Étape 01 — DÉCLARATION</p>
+            <h2 className="cinematic-title">Collecte &amp; Analyse des pièces</h2>
+            <p className="cinematic-desc">
+              Nous rassemblons tous les documents indispensables, décryptons les termes du contrat et analysons la situation pour bâtir un dossier solide.
+            </p>
+          </CinematicSlide>
+
+          {/* Slide 3: Etape 2 */}
+          <CinematicSlide scrollYProgress={scrollYProgress} range={[0.72, 0.75, 0.79, 0.81]}>
+            <p className="cinematic-eyebrow">Étape 02 — FORMALITÉS</p>
+            <h2 className="cinematic-title">Ouverture du dossier d'assurance</h2>
+            <p className="cinematic-desc">
+              Nous déclarons officiellement le sinistre à l'assureur, coordonnons la planification d'expertises et gérons tous les échanges techniques.
+            </p>
+          </CinematicSlide>
+
+          {/* Slide 4: Etape 3 */}
+          <CinematicSlide scrollYProgress={scrollYProgress} range={[0.81, 0.84, 0.88, 0.90]}>
+            <p className="cinematic-eyebrow">Étape 03 — ACTION</p>
+            <h2 className="cinematic-title">Relances &amp; Négociation actives</h2>
+            <p className="cinematic-desc">
+              Notre équipe d'experts relance régulièrement le secrétariat de l'assureur pour s'assurer que les délais légaux de traitement sont respectés.
+            </p>
+          </CinematicSlide>
+
+          {/* Slide 5: Etape 4 */}
+          <CinematicSlide scrollYProgress={scrollYProgress} range={[0.90, 0.93, 0.96, 0.98]}>
+            <p className="cinematic-eyebrow">Étape 04 — RÉSULATION</p>
+            <h2 className="cinematic-title">Suivi des réparations &amp; Indemnisation</h2>
+            <p className="cinematic-desc">
+              Nous contrôlons la mise en œuvre des réparations ou débloquons les fonds d'indemnisation jusqu'au versement final à votre bénéfice.
+            </p>
+          </CinematicSlide>
+
+          {/* Slide 6: Contact CTA */}
+          <CinematicSlide scrollYProgress={scrollYProgress} range={[0.96, 0.98, 1.00, 1.00]}>
+            <p className="cinematic-eyebrow active">ASSISTANCE DISPONIBLE 24/7</p>
+            <h2 className="cinematic-title">Déclarez un sinistre maintenant</h2>
+            <p className="cinematic-desc">
+              Un sinistre en cours ? Des questions sur vos garanties ? Notre assistance directe vous guide pas à pas.
+            </p>
+            <div style={{
+              display: 'flex',
+              gap: '1.2rem',
+              justifyContent: 'center',
+              marginTop: '2.5rem',
+              flexWrap: 'wrap',
+              pointerEvents: 'auto'
+            }}>
+              <motion.a
+                href="tel:+221778628648"
+                whileHover={{ scale: 1.05, boxShadow: '0 8px 30px rgba(91,179,240,0.45)' }}
+                whileTap={{ scale: 0.95 }}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.8rem',
+                  padding: '0.95rem 2.2rem',
+                  background: 'linear-gradient(135deg, var(--royal) 0%, var(--sky) 100%)',
+                  color: '#fff',
+                  borderRadius: '30px',
+                  textDecoration: 'none',
+                  fontSize: '0.9rem',
+                  fontWeight: 700,
+                  boxShadow: '0 4px 20px rgba(46,125,212,0.3)',
+                  letterSpacing: '0.04em',
+                }}
+              >
+                <Phone size={18} />
+                <span>Appeler l'assistance</span>
+              </motion.a>
+
+              <motion.a
+                href="https://wa.me/221778628648"
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.05, boxShadow: '0 8px 30px rgba(37, 211, 102, 0.4)' }}
+                whileTap={{ scale: 0.95 }}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.8rem',
+                  padding: '0.95rem 2.2rem',
+                  background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)',
+                  color: '#fff',
+                  borderRadius: '30px',
+                  textDecoration: 'none',
+                  fontSize: '0.9rem',
+                  fontWeight: 700,
+                  boxShadow: '0 4px 20px rgba(37, 211, 102, 0.3)',
+                  letterSpacing: '0.04em',
+                }}
+              >
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                  <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.513 2.262 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436.002 9.858-4.419 9.86-9.86.002-2.63-1.023-5.101-2.885-6.966a9.782 9.782 0 0 0-6.96-2.879C5.976.056 1.557 4.478 1.555 9.92c-.001 1.63.452 3.22 1.312 4.675l-.979 3.57 3.659-.96c1.475.804 3.008 1.229 4.51 1.229zm9.066-6.152c-.287-.143-1.697-.838-1.959-.933-.261-.096-.451-.143-.641.143-.19.285-.736.933-.903 1.122-.166.19-.332.214-.618.071-.285-.143-1.207-.444-2.299-1.419-.848-.758-1.422-1.694-1.588-1.98-.166-.285-.018-.44.125-.581.128-.127.287-.333.43-.5.143-.166.19-.285.286-.476.095-.19.048-.357-.024-.5-.071-.143-.641-1.544-.878-2.115-.23-.555-.463-.48-.641-.489-.166-.008-.356-.01-.546-.01-.19 0-.5.071-.76.357-.261.285-.998.976-.998 2.38 0 1.405 1.022 2.761 1.164 2.952.143.19 2.012 3.073 4.874 4.312.68.295 1.212.47 1.626.601.683.218 1.305.187 1.797.114.548-.082 1.697-.693 1.937-1.362.24-.669.24-1.242.167-1.362-.072-.12-.266-.19-.553-.333z" />
+                </svg>
+                <span>WhatsApp</span>
+              </motion.a>
+            </div>
+          </CinematicSlide>
+
+          {/* Dots Indicator */}
+          <div style={{
+            position: 'absolute',
+            bottom: '6%',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'rgba(255, 255, 255, 0.05)',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            padding: '10px 16px',
+            borderRadius: '20px',
+            zIndex: 30,
+          }}>
+            {[0, 1, 2, 3, 4, 5].map((idx) => (
+              <ScrollerDot key={idx} idx={idx} scrollYProgress={scrollYProgress} />
+            ))}
           </div>
         </motion.div>
       </div>
@@ -658,6 +870,146 @@ function ClaimsCinematic() {
   )
 }
 
+
+function TeamContact({ phone, accent }) {
+  const [isOpen, setIsOpen] = useState(false)
+  const cleanPhone = phone.replace(/\s+/g, '')
+  const whatsappUrl = `https://wa.me/${cleanPhone.replace('+', '')}`
+  const telUrl = `tel:${cleanPhone}`
+
+  return (
+    <div 
+      className="team-contact-container" 
+      style={{ marginTop: 'auto', paddingTop: '20px' }}
+      onMouseLeave={() => setIsOpen(false)}
+    >
+      <AnimatePresence mode="wait">
+        {!isOpen ? (
+          <motion.button
+            key="trigger"
+            onClick={() => setIsOpen(true)}
+            initial={{ opacity: 0, y: 5 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -5 }}
+            transition={{ duration: 0.2 }}
+            className="team-contact-trigger"
+            style={{
+              width: '100%',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '10px 18px',
+              borderRadius: '24px',
+              fontWeight: '700',
+              fontSize: '0.9rem',
+              cursor: 'pointer',
+              boxShadow: '0 4px 12px rgba(13, 31, 60, 0.03)',
+              '--member-accent': accent || 'var(--teal)'
+            }}
+          >
+            <span>Contacter</span>
+            <ArrowRight size={16} />
+          </motion.button>
+        ) : (
+          <motion.div
+            key="options"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            className="team-contact-options"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '10px',
+              width: '100%',
+            }}
+          >
+            <motion.a
+              href={telUrl}
+              className="team-contact-icon-btn tel"
+              title="Appel direct"
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.95 }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                flex: 1,
+                height: '42px',
+                background: 'linear-gradient(135deg, var(--blue, #0f6fa8), #0b4f78)',
+                color: '#fff',
+                borderRadius: '24px',
+                boxShadow: '0 4px 14px rgba(15, 111, 168, 0.2)',
+                textDecoration: 'none',
+                fontSize: '0.85rem',
+                fontWeight: '700',
+              }}
+            >
+              <Phone size={16} />
+              <span>Appeler</span>
+            </motion.a>
+
+            <motion.a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="team-contact-icon-btn whatsapp"
+              title="WhatsApp"
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.95 }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                flex: 1,
+                height: '42px',
+                background: 'linear-gradient(135deg, #25D366, #128C7E)',
+                color: '#fff',
+                borderRadius: '24px',
+                boxShadow: '0 4px 14px rgba(37, 211, 102, 0.2)',
+                textDecoration: 'none',
+                fontSize: '0.85rem',
+                fontWeight: '700',
+              }}
+            >
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.513 2.262 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436.002 9.858-4.419 9.86-9.86.002-2.63-1.023-5.101-2.885-6.966a9.782 9.782 0 0 0-6.96-2.879C5.976.056 1.557 4.478 1.555 9.92c-.001 1.63.452 3.22 1.312 4.675l-.979 3.57 3.659-.96c1.475.804 3.008 1.229 4.51 1.229zm9.066-6.152c-.287-.143-1.697-.838-1.959-.933-.261-.096-.451-.143-.641.143-.19.285-.736.933-.903 1.122-.166.19-.332.214-.618.071-.285-.143-1.207-.444-2.299-1.419-.848-.758-1.422-1.694-1.588-1.98-.166-.285-.018-.44.125-.581.128-.127.287-.333.43-.5.143-.166.19-.285.286-.476.095-.19.048-.357-.024-.5-.071-.143-.641-1.544-.878-2.115-.23-.555-.463-.48-.641-.489-.166-.008-.356-.01-.546-.01-.19 0-.5.071-.76.357-.261.285-.998.976-.998 2.38 0 1.405 1.022 2.761 1.164 2.952.143.19 2.012 3.073 4.874 4.312.68.295 1.212.47 1.626.601.683.218 1.305.187 1.797.114.548-.082 1.697-.693 1.937-1.362.24-.669.24-1.242.167-1.362-.072-.12-.266-.19-.553-.333z" />
+              </svg>
+              <span>WhatsApp</span>
+            </motion.a>
+
+            <motion.button
+              onClick={() => setIsOpen(false)}
+              className="team-contact-close"
+              title="Retour"
+              whileHover={{ scale: 1.1, backgroundColor: 'rgba(0, 0, 0, 0.1)' }}
+              whileTap={{ scale: 0.95 }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '32px',
+                height: '32px',
+                background: 'rgba(0, 0, 0, 0.05)',
+                color: 'var(--muted)',
+                border: 'none',
+                borderRadius: '50%',
+                cursor: 'pointer',
+                flexShrink: 0,
+              }}
+            >
+              <X size={14} />
+            </motion.button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
 
 function PartnersAndTeam() {
   return (
@@ -675,7 +1027,6 @@ function PartnersAndTeam() {
 
           <div className="orbital-center">
             <img src="/djolof.png" alt="DJOLOF ASSUR SA" />
-            <span>Partenaire Principal</span>
           </div>
 
           {partners.filter(p => !p.main).map((partner, index, arr) => {
@@ -705,10 +1056,7 @@ function PartnersAndTeam() {
               <div className="team-content">
                 <h3>{member.name}</h3>
                 <p>{member.role}</p>
-                <a href="mailto:contact@optimumassur.sn" className="team-contact-link">
-                  <span>Contacter</span>
-                  <ArrowRight size={16} />
-                </a>
+                {member.phone && <TeamContact phone={member.phone} />}
               </div>
             </article>
           </FadeIn>
@@ -768,12 +1116,12 @@ function Location() {
             Contactez-nous pour un devis, un renouvellement, une déclaration de sinistre ou un audit de vos contrats existants.
           </p>
           <div className="contact-stack">
-            <a href="tel:+221338001234"><Phone size={18} /> +221 33 800 12 34</a>
-            <a href="mailto:contact@optimumassur.sn"><Mail size={18} /> contact@optimumassur.sn</a>
+            <a href="tel:+221778628648"><Phone size={18} /> Contacter notre assistant(e)</a>
+            <a href="mailto:contact@optimumassur.sn"><Mail size={18} /> Nous contacter via mail</a>
             <span><MapPin size={18} /> Dakar, Sénégal</span>
           </div>
           <div className="location-actions">
-            <a className="button button-primary" href="mailto:contact@optimumassur.sn?subject=Demande%20de%20devis">
+            <a className="button button-primary" href="mailto:oassurpro@gmail.com?subject=Demande%20de%20devis">
               <MessageCircle size={18} />
               Ecrire à OAP
             </a>
@@ -816,7 +1164,7 @@ function ServicePage({ service }) {
             <h1>{service.title}</h1>
             <p>{service.hero}</p>
             <div className="service-hero-actions">
-              <a className="button button-primary" href="mailto:contact@optimumassur.sn?subject=Demande%20de%20devis">
+              <a className="button button-primary" href="mailto:oassurpro@gmail.com?subject=Demande%20de%20devis">
                 <Mail size={18} />
                 Demander un devis
               </a>

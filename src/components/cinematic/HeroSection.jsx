@@ -131,7 +131,7 @@ export default function HeroSection() {
           {/* CTAs */}
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 2.1 }}
             style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-            <motion.a href="tel:+221338001234"
+            <motion.a href="tel:+221778628648"
               whileHover={{ scale: 1.04, boxShadow: '0 8px 40px rgba(91,179,240,0.45)' }} whileTap={{ scale: 0.97 }}
               style={{
                 padding: '0.9rem 2.2rem',

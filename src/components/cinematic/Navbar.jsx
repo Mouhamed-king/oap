@@ -63,7 +63,7 @@ export default function Navbar() {
               onMouseLeave={e => e.target.style.color = textSecondary}
             >{l.label}</motion.a>
           ))}
-          <motion.a href="tel:+221338001234"
+          <motion.a href="tel:+221778628648"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}
             whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
             style={{
@@ -100,7 +100,7 @@ export default function Navbar() {
                 {l.label}
               </a>
             ))}
-            <a href="tel:+221338001234"
+            <a href="tel:+221778628648"
               style={{ marginTop: '0.5rem', padding: '0.7rem', background: 'linear-gradient(135deg, var(--royal), var(--sky))', color: 'white', borderRadius: '8px', textDecoration: 'none', fontSize: '0.88rem', fontWeight: 500, textAlign: 'center' }}>
               Nous contacter
             </a>
